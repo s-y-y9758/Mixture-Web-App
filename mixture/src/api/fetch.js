@@ -71,7 +71,7 @@ export function getIdPictures(id) {
 // 	})
 // }
 
-export function getVideoer(id) {
+export function getVideoer(id) {//获取图片里每个摄影师对应的数据，来自图虫api
 	let mine = new Promise((resolve,reject)=>{
 		axios.get(`/rest/sites/${id}/posts?page=1&count=20`)
     	.then(res=>{

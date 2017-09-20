@@ -30,7 +30,7 @@ export default {
 		}
 	},
 	created() {
-		if(this.getPictureId.length>0) {
+		if(this.getPictureId) {
 			return;
 		}
 		this.$store.dispatch('getPictureId');

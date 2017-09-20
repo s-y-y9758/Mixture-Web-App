@@ -13,12 +13,11 @@
 				</div>
 				<div class='part_main'>
 					<img :src='item.data.cover&&item.data.cover.detail' @touchstart='play($event,index)' @touchmove='moved($event)' @touchend='touchesend(index)' ref='images'>
-					<video ref='video' class='video' controls>
+					<video ref='video' class='video' controls @touchend='touchesend(index)'>
 						<source :src='item.data.playUrl&&item.data.playUrl' type="video/mp4" />
 			    		<source :src='item.data.playUrl&&item.data.playUrl' type="video/webM" />
 			   			<source :src='item.data.playUrl&&item.data.playUrl' type="video/ogg" />
 					</video>
-					<p class='play_icon'><i class="iconfont">&#xe6a5;</i></p>
 					<p class='timeAndPlay'>
 						{{`${parseInt(item.data.duration/60)}'${item.data.duration%60}"`}}
 					</p>
@@ -34,6 +33,11 @@
 import Scroll from 'base/Scroll'
 export default{
 	name:'vedio',
+	data(){
+		return{
+			playing:false
+		}
+	},
 	computed:{
 		getVideo() {
 			var arr = this.$store.getters.videoes;
@@ -48,21 +52,32 @@ export default{
 	methods:{
 		play(e,index) {
 			this.startY = e.touches[0].pageY;
-			this.$refs.images[index].style.display = 'none'
-			this.$refs.video[index].style.display = 'block'
+			this.startX = e.touches[0].pageX;
 		},
 		moved(e) {
-			this.moveY = e.touches[0].pageY
+			this.moveY = e.touches[0].pageY;
+			this.moveX = e.touches[0].pageX;
 			this.disY = this.moveY - this.startY
-			if(this.disY>5) {
+			this.disX = this.moveYX - this.startYX
+			if(this.disY>10||this.disX>10) {
 				this.isMove = true
 			}
 		},
 		touchesend(index) {
 			if(this.isMove) {
 				return
-			}		
-			this.$refs.video[index].play()
+			}
+			this.$refs.images[index].style.display = 'none'
+			this.$refs.video[index].style.display = 'block'
+			this.playing=!this.playing
+			if(this.playing){
+				this.$refs.video[index].play();
+				this.playing = true
+			}else {
+				this.$refs.video[index].pause();
+				this.playing=false
+			}	
+			
 		},
 		duration(index) {
 			let minute = parseInt(this.obj.duration/60);
@@ -171,7 +186,7 @@ export default{
 	height:0.46rem;
 	line-height: 0.46rem;
 	text-align: right;
-	margin-top: 0.34rem;
+	margin-top: -0.2rem;
 	padding: 0.1rem 0.4rem;
 	font-size: 0.26rem;
 	color: #000;

@@ -2,22 +2,22 @@
 <div id='pictureDetail'>
 <scroll :data='authorMassage'>
 	<div>
-		<p class='author clearFix' @click='getAuthorSelf(authorMassage[0]&&authorMassage[0].posts[0].author_id)'>
-			<span class='images'><img :src='authorMassage[0]&&authorMassage[0].sites[authorMassage[0].posts[0].author_id].icon'></span>
-			<span class='author_name'>{{authorMassage[0]?authorMassage[0].sites[authorMassage[0].posts[0].author_id].name:''}}</span>
-			<span class='publishTime'>{{time}}</span>
+		<p class='author clearFix' @click='getAuthorSelf(authorMassage&&authorMassage.author_id)'>
+			<span class='images'><img :src='authorMassage&&authorMassage.icon'></span>
+			<span class='author_name'>{{authorMassage?authorMassage.name:''}}</span>
+			<span class='publishTime'>{{authorMassage.time?authorMassage.time.split(' ')[0]:''}}</span>
 		</p>
 		<div>
-			<div v-for='item in authorMassage[0]&&authorMassage[0].posts[0].image_srcs'>
+			<div v-for='item in authorMassage&&authorMassage.imgSrc'>
 				<p class='main_img'><img :src='item&&item'></p>				
 			</div>
 			<div class='content'>
-				<h2 class='big-title'>{{authorMassage[0]?authorMassage[0].posts[0].title:''}}</h2>
-				<p class="excerpt">{{authorMassage[0]?authorMassage[0].posts[0].excerpt:''}}</p>			
+				<h2 class='big-title'>{{authorMassage?authorMassage.title:''}}</h2>
+				<p class="excerpt">{{authorMassage?authorMassage.excerpt:''}}</p>			
 			</div>
 		</div>
 		<ul class='type clearFix'>
-			<li class="list" v-for='item in authorMassage[0].posts[0].tags'>{{item?item.tag_name:''}}</li>
+			<li class="list" v-for='item in authorMassage.tags'>{{item?item.tag_name:''}}</li>
 		</ul>
 	</div>
 </scroll>
@@ -32,18 +32,18 @@ export default {
 	name:'pictureDetail',
 	computed:{
 		authorMassage() {
-			var arr = []
-			arr.push(this.$store.getters.authorMassage)
-			return arr
-		},
-		time() {
-			if(this.authorMassage[0]) {
-				return this.authorMassage[0].posts[0].published_at.split(' ')[0]
-			}
+			return this.$store.getters.authorMassage
 		}
 	},
 	mounted(){
-		this.$store.dispatch('getAuthorMassage',this.$route.params.author_id);
+		var obj = {}
+		obj.id = this.$route.params.author_id;
+		obj.index = 0
+		console.log(obj.id,this.authorMassage.author_id)
+		if(this.authorMassage.author_id == obj.id) {
+			return
+		}
+		this.$store.dispatch('getAuthorMassage',obj);
 	},
 	methods:{
 		getAuthorSelf(id) {

@@ -3,9 +3,6 @@ import {getHotTalk,getPictureIdName,getIdPictures,getVideoer,getNamegetSearchLis
 export default {
 	getTodayList({commit},num){
 		var _num = num;
-		// getHotTalk().then(data=>{
-		// 	console.log(res)
-		// })
 		getHotTalk().then(data=>{
 			var arrVideo = data.itemList
 			arrVideo = arrVideo.filter(function(item) {
@@ -87,9 +84,27 @@ export default {
 			})
 		})
 	},
-	getAuthorMassage({commit,state},id) {
+	getAuthorMassage({commit,state},{id,index}) {
 		getVideoer(id).then(res=>{
-			commit('getAuthorMassage',res)
+			var arr = {};
+			arr.imgSrc = res.posts[index].image_srcs;
+			arr.title = res.posts[index].title;
+			arr.excerpt = res.posts[index].excerpt;
+			arr.tags = res.posts[index].tags;
+			arr.icon = res.sites[id].icon;
+			arr.name = res.sites[id].name;
+			arr.author_id = id;
+			arr.time = res.posts[index].published_at;
+			arr.description = res.sites[id].description;
+			arr.followers = res.sites[id].followers;
+			arr.imgSrcs =[]
+			res.posts.forEach(function(value){
+				var obj = {}
+				obj.image_srcs = value.image_srcs
+				obj.favorites = value.favorites
+				arr.imgSrcs.push(obj)
+			})
+			commit('getAuthorMassage',arr)
 		})
 	},
 	getVideo({commit}) {
@@ -100,20 +115,27 @@ export default {
 	},
 	getResultList({commit},value) {
 		getResultList(value).then(res=>{
-			console.log(res)
-			const obj = {}
-			obj.trs = res.ec.word[0].trs
-			var word = res.simple.word[0]
-			word.query = res.simple.query
-			obj.simple = word
+			const obj = {};
+			obj.simple={};
+			obj.simple.query = res.simple.query;
+			obj.simple.phone = res.ec21.word[0].phone;
 			if(res.syno) {
-				obj.syno = res.syno.synos
-			}			
-			obj.webTrans = res.web_trans['web-translation'][0].trans
-			obj.blngPart = res.blng_sents_part.sentencePair
-			obj.ec21 = res.ec21.word[0]
-			console.log(obj.ec21)
-			obj.collins = res.collins.collins_entries[0]
+				obj.syno = res.syno.synos;
+			}
+			obj.trs = res.ec.word[0].trs;						
+			obj.webTrans = res.web_trans['web-translation'][0].trans;
+			obj.blngPart = res.blng_sents_part.sentencePair;
+			obj.ec21 = res.ec21.word[0];
+			obj.collins = {};
+			obj.collins.headword = res.collins.collins_entries[0].headword;
+			obj.collins.phonetic = res.collins.collins_entries[0].phonetic;
+			if(res.collins.collins_entries[0].basic_entries.basic_entry[0].cet){
+				obj.collins.cet = res.collins.collins_entries[0].basic_entries.basic_entry[0].cet
+			}
+			if(res.collins.collins_entries[0].basic_entries.basic_entry[0].wordforms&&res.collins.collins_entries[0].basic_entries.basic_entry[0].wordforms.wordform) {
+				obj.collins.wordform = res.collins.collins_entries[0].basic_entries.basic_entry[0].wordforms.wordform
+			}
+			obj.collins.entry = res.collins.collins_entries[0].entries.entry
 			commit('getResultList',obj)
 		})
 	}

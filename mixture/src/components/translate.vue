@@ -19,8 +19,8 @@
 			<div class='content_query'>{{resultList.simple?resultList.simple.query:''}}</div>
 			<div class='symbol'>
 				<span class="one" v-if='resultList.simple.phone'>{{`/${resultList.simple.phone}/`}}</span>
-				<span class="mei" v-if='!resultList.simple.phone'>{{resultList.simple?`英/${resultList.simple.ukphone}/`:''}}</span>
-				<span class="yin" v-if='!resultList.simple.phone'>{{resultList.simple?`美/${resultList.simple.usphone}/`:''}}</span>
+				<!-- <span class="mei" v-if='!resultList.simple.phone'>{{resultList.simple?`英/${resultList.simple.ukphone}/`:''}}</span>
+				<span class="yin" v-if='!resultList.simple.phone'>{{resultList.simple?`美/${resultList.simple.usphone}/`:''}}</span> -->
 			</div>
 		</div>
 		<div>
@@ -55,15 +55,16 @@
 					    <div class='collins' v-if='index==1'>
 					    	<div class='collins-top'>
 					    		<span class='headword'>{{resultList.collins.headword}}</span>
-					    		<span class='phonetic' v-if='resultList.collins.phonetic'>/{{resultList.collins.phonetic}}/</span>
-					    		<span class='cet' v-if='resultList.collins.basic_entries.basic_entry[0].cet'>{{resultList.collins.basic_entries.basic_entry[0].cet}}</span>
+					    		<span class='phonetic' v-if='resultList.collins'>/{{resultList.collins.phonetic}}/</span>
+					    		<span class='cet' v-if='resultList.collins.cet'>{{resultList.collins.cet}}</span>
 					    	</div>
-					    	<p class='wordform' v-if='resultList.collins.basic_entries.basic_entry[0].wordforms'>({{resultList.collins.basic_entries.basic_entry[0].wordforms?`${resultList.collins.basic_entries.basic_entry[0].wordforms.wordform[0].word},${resultList.collins.basic_entries.basic_entry[0].wordforms.wordform[1].word},${resultList.collins.basic_entries.basic_entry[0].wordforms.wordform[2].word}`:''}})</p>
+					    	<p class='wordform' v-if='resultList.collins.wordform'>
+					    		<span v-for='item8 in resultList.collins.wordform'>{{item8}}</span></p>
 					    	<ul>
-					    		<li class='tranentry' v-for='item3,index in resultList.collins.entries.entry'>
+					    		<li class='tranentry' v-for='item3,index in resultList.collins.entry'>
 					    			<span class="num">{{index+1}}</span>
 					    			<span class='tran' v-html='item3.tran_entry[0].tran'></span>
-					    			<p class='eng_sent'>·&nbsp;{{item3.tran_entry[0].exam_sents?`${item3.tran_entry[0].exam_sents.sent[0].eng_sent}`:''}}</p>
+					    			<p class='eng_sent' v-if='item3.tran_entry[0].exam_sents'>·&nbsp;{{item3.tran_entry[0].exam_sents?`${item3.tran_entry[0].exam_sents.sent[0].eng_sent}`:''}}</p>
 					    			<p class='chn_sent'>{{item3.tran_entry[0].exam_sents?`${item3.tran_entry[0].exam_sents.sent[0].chn_sent}`:''}}</p>
 					    		</li>
 					    	</ul>
@@ -113,8 +114,7 @@ export default{
 		}
 	},
 	created(){
-		this.$store.dispatch('getResultList','account')
-			
+		this.$store.dispatch('getResultList','account')			
 	},
 	computed:{
 		resultList(){

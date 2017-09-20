@@ -3,19 +3,19 @@
 	<div id='authorSelf'>
 		<div class='forAuthor'>
 			<div class='bg' :style="{backgroundImage:'url(https://s1.tuchong.com/sites/107/1073726/header.jpg?5)'}">
-				<p class='icon' :style="{backgroundImage:'url('+authorMassage[0].sites[authorMassage[0].posts[0].author_id].icon +')'}">
+				<p class='icon' :style="{backgroundImage:'url('+authorMassage.icon +')'}">
 				</p>
-				<p class='name'>{{authorMassage[0]?authorMassage[0].sites[authorMassage[0].posts[0].author_id].name:''}}</p>
-				<p class='des'>{{authorMassage[0]?authorMassage[0].sites[authorMassage[0].posts[0].author_id].description:''}}</p>
-				<p class='follow'>粉丝:{{authorMassage[0]?authorMassage[0].sites[authorMassage[0].posts[0].author_id].followers:0}}</p>
+				<p class='name'>{{authorMassage?authorMassage.name:''}}</p>
+				<p class='des'>{{authorMassage?authorMassage.description:''}}</p>
+				<p class='follow'>粉丝:{{authorMassage?authorMassage.followers:0}}</p>
 			</div>
 		</div>
 		<p class='works_title'>作品</p>
 		<ul class='works'>
-			<li v-for='item in authorMassage[0].posts' @click='goDetails(item.author_id)'>
+			<li v-for='item,index in authorMassage.imgSrcs' @click='goDetails(authorMassage.author_id,index)'>
 				<img v-lazy='item.image_srcs[0]'>
 				<p class='num'>{{item.image_srcs.length>1?item.image_srcs.length:''}}</p>
-				<p class='likes'>{{item.favorites}}喜欢</p>
+				<p class='likes'>{{item.image_srcs.favorites}}喜欢</p>
 			</li>
 		</ul>
 	</div>
@@ -29,13 +29,15 @@ export default {
 	name:'authorSelf',
 	computed:{
 		authorMassage() {
-			var arr = []
-			arr.push(this.$store.getters.authorMassage)
-			return arr
+			return this.$store.getters.authorMassage
 		}
 	},
 	methods:{
-		goDetails(id){
+		goDetails(id,index){
+			var obj={};
+			obj.id=id;
+			obj.index=index
+			this.$store.dispatch('getAuthorMassage',obj);
 			this.$router.push({name:'PictureDetail',params:{author_id:id}})
 		}
 	},
