@@ -17,7 +17,7 @@
 			</div>
 		</div>
 		<ul class='type clearFix'>
-			<li class="list" v-for='item in authorMassage.tags' @click='goTag(item.tag_name)'>{{item?item.tag_name:''}}</li>
+			<li class="list" v-for='item in authorMassage.tags'>{{item?item.tag_name:''}}</li>
 		</ul>
 		<p class='works_title' @click='getAuthorSelf(authorMassage&&authorMassage.author_id)'>
 			<span class="images">
@@ -26,7 +26,9 @@
 			<span class='text'>{{authorMassage?authorMassage.name+'的其他作品':''}}</span>
 			<span class='more'>更多>></span>
 		</p>
-		<pictureType :authorMassage='authorMassage' @goDetail='pictureDetail'></pictureType>
+		<pictureType 
+		:authorMassage='authorMassage' 
+		@goDetail='pictureDetail'></pictureType>
 	</div>
 </scroll>
 </div>
@@ -72,9 +74,6 @@ export default {
 		pictureDetail(obj){
 			this.$store.dispatch('getAuthorMassage',obj);
 			this._scrollTo();
-		},
-		goTag(name){
-			this.$router.push({name:'Tags',params:{id:name}})
 		},
 		_scrollTo(){
 			this.$refs.scroller.scrollTo(0,0,600)
