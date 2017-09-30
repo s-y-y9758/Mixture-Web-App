@@ -2,14 +2,23 @@
 <div id='pictureDetail'>
 <scroll :data='authorMassage' ref='scroller'>
 	<div>
-		<p class='author clearFix' @click='getAuthorSelf(authorMassage&&authorMassage.author_id)'>
+		<p class='author clearFix' @touchstart='getAuthorSelf(authorMassage&&authorMassage.author_id)'>
 			<span class='images'><img :src='authorMassage&&authorMassage.icon'></span>
 			<span class='author_name'>{{authorMassage?authorMassage.name:''}}</span>
 			<span class='publishTime'>{{authorMassage.time?authorMassage.time.split(' ')[0]:''}}</span>
 		</p>
 		<div>
 			<div>
-				<p class='main_img'><img :src='authorMassage.imgSrc&&authorMassage.imgSrc[0]'></p>				
+				<p class='main_img' @touchstart='bigImg'><img :src='authorMassage.imgSrc&&authorMassage.imgSrc[0]'></p>				
+			</div>
+			<div class="bigImg" v-if='isBigimg'>
+				<slide>
+					<ul>
+						<li v-for='item in authorMassage.imgSrc'>
+							<img :src='item'>
+						</li>
+					</ul>
+				</slide>
 			</div>
 			<div class='content'>
 				<h2 class='big-title'>{{authorMassage?authorMassage.title:''}}</h2>
@@ -39,12 +48,14 @@
 import Scroll from 'base/Scroll';
 import PictureType from 'base/PictureType'
 import {getNewObj} from 'common/js/getNewObj'
+import Slide from 'base/slide'
 
 export default {
 	name:'pictureDetail',
 	data() {
 		return{
-			scrollY:-1
+			scrollY:-1,
+			isBigimg:false
 		}
 	},
 	computed:{
@@ -75,13 +86,21 @@ export default {
 			this.$store.dispatch('getAuthorMassage',obj);
 			this._scrollTo();
 		},
+		// goTag(name){
+		// 	this.$router.push({name:'Tags',params:{id:name}})
+		// },
 		_scrollTo(){
 			this.$refs.scroller.scrollTo(0,0,600)
 		}
+		// ,
+		// bigImg(){
+		// 	this.isBigimg = true
+		// }
 	},
 	components:{
 		Scroll,
-		PictureType
+		PictureType,
+		Slide
 	}
 
 }
@@ -109,6 +128,14 @@ html,
 	line-height: 0.6rem;
 	color:#000;
 	font-size: 0.3rem;
+}
+.bigImg {
+	position: relative;
+	top:0;
+	left: 0;
+	bottom: 0;
+	right:0;
+	background: #000;
 }
 #pictureDetail .more{
 	float: right;

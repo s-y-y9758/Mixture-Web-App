@@ -169,7 +169,11 @@ export default{
 	height: 100%;
 }
 #translate .weui-icon-search {
+	text-decoration:none !important;
 	margin-top: 0.2rem;
+}
+#translate .weui-search-bar__cancel-btn {
+	color:#d62a35;
 }
 #translate .weui-search-bar__cancel-btn {
 	font-size: 0.4rem !important;

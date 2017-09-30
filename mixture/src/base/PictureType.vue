@@ -7,6 +7,7 @@
 			<p class='likes'>{{item.favorites}}喜欢</p>
 		</li>
 	</ul>
+	<slot></slot>
 </div>
 	
 </template>

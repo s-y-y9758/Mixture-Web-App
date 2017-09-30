@@ -62,6 +62,7 @@ export default {
 	getPictureId({commit}){
 		getPictureIdName().then(data=>{	
 			var content = data.categories;
+			// console.log(data)
 			content.length = 3
 			content.forEach(function(value1,index) {
 				var id = value1.tag_id
@@ -84,8 +85,8 @@ export default {
 			})
 		})
 	},
-	getAuthorMassage({commit,state},{id,index}) {
-		getVideoer(id).then(res=>{
+	getAuthorMassage({commit,state},{id,index,page,count}) {
+		getVideoer(id,page,count).then(res=>{
 			var arr = {};
 			arr.imgSrc = res.posts[index].image_srcs;
 			arr.title = res.posts[index].title;
@@ -102,7 +103,6 @@ export default {
 				var obj = {}
 				obj.image_srcs = value.image_srcs
 				obj.favorites = value.favorites
-
 				arr.imgSrcs.push(obj)
 			})
 			commit('getAuthorMassage',arr)

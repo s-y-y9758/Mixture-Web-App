@@ -8,6 +8,15 @@
 import Bscroll from 'better-scroll'
 export default {
 	name:'scroll',
+	data(){
+		return {
+			loadingConnecting: false,
+            pullupTip: {
+                text: '加载更多',     // 松开立即刷新
+                rotate: ''    // icon-rotate
+            },
+		}
+	},
 	props: {
 		click: 
 		{
@@ -22,6 +31,23 @@ export default {
 	        // type: Array,
 	        default: null
 	    },
+	    pullup: {
+            type: Boolean,
+            default: false
+        },
+        loadingStatus: {
+            type: Object,
+            default: function () {
+                return {
+                    showIcon: false,
+                    status: ''
+                };
+            }
+        },
+        pullupUI: {
+            type: Boolean,
+            default: false
+        },
 	    scrollY:{
 	    	type: Boolean,
 	        default: true
@@ -56,6 +82,14 @@ export default {
 		            me.$emit('scroll', pos)
 		        })
 			};
+			if (this.pullup) {
+                this.scroll.on('scrollEnd', () => {
+                    // 滚动到底部
+                    if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
+                        this.$emit('scrollToEnd');
+                    }
+                });
+            }
 		},
 		disable() {
         	this.scroll && this.scroll.disable()

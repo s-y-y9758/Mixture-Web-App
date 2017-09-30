@@ -39,9 +39,9 @@ export default {
 		this.probeType = 3;
 		this.listHeight=[];
 		var _this = this;
-		setTimeout(function() {
+		this.$nextTick(function(){
 			_this._calculateHeight();
-		},50)
+		})
 		if(this.getPictureId.length !== 0) {
 			return;
 		}
@@ -49,6 +49,7 @@ export default {
 	},
 	computed:{
 		getPictureId() {
+			console.log(this.$store.getters.pictureId)
 			return this.$store.getters.pictureId
 		},
 		fixedTitle(){

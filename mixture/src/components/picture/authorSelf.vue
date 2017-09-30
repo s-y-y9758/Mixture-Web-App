@@ -17,13 +17,18 @@
 	class='list' 
 	:listenScroll='listenScroll'
 	:probeType='probeType'
-	@scroll='scroll'>
+	@scroll='scroll'
+	@scrollToEnd='scrollEnded'
+	:pullup='pullup'
+	:pullupUI='pullupUI'
+	>
 		<div class='list-wrap' ref='listWrap'>
 			<p class='works_title'>作品</p>
-			<pictureType :authorMassage='authorMassage' @goDetail='pictureDetail' class='pictureType'></pictureType>
+			<pictureType :authorMassage='authorMassage' @goDetail='pictureDetail' class='pictureType'>
+				<div class='getMore' v-show='getMore' ref='getMore'>加载更多</div>
+			</pictureType>	
 		</div>					
 	</scroll>
-	<!-- <div class='getMore' v-show='getMore'>加载更多</div> -->
 	</div>
 </template>
 
@@ -31,6 +36,7 @@
 import Scroll from 'base/scroll'
 import PictureType from 'base/PictureType'
 import {getNewObj} from 'common/js/getNewObj'
+
 
 export default {
 	name:'authorSelf',
@@ -44,16 +50,25 @@ export default {
 	computed:{
 		authorMassage() {
 			var message = this.$store.getters.authorMassage;
-			// var newMessage = getNewObj(message);
-			// if(newMessage.imgSrcs) {
-			// 	newMessage.imgSrcs.length = 8;
-			// }	
+			if(this.long >= message.imgSrcs.length) {
+				this.$refs.getMore.innerHTML = '没有更多了'
+			}			
+			this.long = message.imgSrcs.length;
 			return message
 		}
 	},
 	created(){
 		this.listenScroll=true;
 		this.probeType=3;
+		this.pullup = true;
+		this.pullupUI = true;
+		this.long = 0;
+		if(this.authorMassage.imgSrcs.length) {
+			this.num = this.authorMassage.imgSrcs.length;
+		} else {
+			this.num = 8;
+		}
+		
 	},
 	mounted() {
 		this.imageHeight = this.$refs.bg.clientHeight;
@@ -63,11 +78,22 @@ export default {
 	},
 	methods:{
 		pictureDetail(obj){
+			this.obj = obj
+			obj.page = 1;
+			obj.count = this.num;
 			this.$store.dispatch('getAuthorMassage',obj);
 			this.$router.push({name:'PictureDetail',params:{author_id:obj.id}})
 		},
 		scroll(pos){
 			this.scrollY = pos.y
+		},
+		scrollEnded(){
+			var obj = {};
+			obj.id = this.authorMassage.author_id;
+			obj.index=0;
+			obj.count = this.num+8;
+			this.num = obj.count
+			this.$store.dispatch('getAuthorMassage',obj);
 		}
 	},
 	watch:{
@@ -125,8 +151,8 @@ export default {
 	height:100%;
 }
 .getMore {
-	position: absolute;
-	bottom: 0;
+	/*position: absolute;*/
+	/*bottom: 0;*/
 	width: 100%;
 	font-size: 0.4rem;
 	line-height: 1.2rem;
